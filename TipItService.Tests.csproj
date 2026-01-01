@@ -20,10 +20,4 @@
     <ProjectReference Include="..\TipItService\TipItService.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="InjectorMicroService">
-      <HintPath>D:\Dropbox\Services\InjectorMicroService.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
