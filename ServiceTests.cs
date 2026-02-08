@@ -9,8 +9,6 @@ namespace TipItService.Tests
     [ExcludeFromCodeCoverage]
     public class ServiceTests
     {
-        private const int K_Season = 2025;
-
         private TipItService? _cut;
 
         [TestInitialize]
@@ -36,32 +34,36 @@ namespace TipItService.Tests
         [TestMethod]
         public void TipItService_CanLoadTippingState()
         {
-            Console.WriteLine($"Using {_cut.TippingStateFileName}");
+            Console.WriteLine($"Using {_cut?.TippingStateFileName}");
             var r = _cut?.LoadTippingState();
             Console.WriteLine($"{r} matches found");
             Assert.IsTrue(r > 0);
             var nrlMatches = _cut?.CurrentState.Matches
-                .Where(m => m.League.Code == "NRL" && m.MatchDateTime.Year == K_Season)
+                .Where(m => m.League.Code == "NRL" 
+                    && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .ToList();
             var nNrlPlayed = nrlMatches
                 .Count(m => m.Played());
             Console.WriteLine(
                 $"For 2024 there are {nrlMatches?.Count} NRL matches {nNrlPlayed} have been played");
             var aflMatches = _cut?.CurrentState.Matches
-                .Where(m => m.League.Code == "AFL" && m.MatchDateTime.Year == K_Season)
+                .Where(m => m.League.Code == "AFL" 
+                    && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .ToList();
             var nAflPlayed = aflMatches
                 .Count(m => m.Played());
             Console.WriteLine(
                 $"For 2024 there are {aflMatches?.Count} AFL matches {nAflPlayed} have been played");
             var aflMatches15 = _cut?.CurrentState.Matches
-                .Where(m => m.League.Code == "AFL" && m.MatchDateTime.Year == K_Season)
+                .Where(m => m.League.Code == "AFL" 
+                    && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .Where(m => m.Round == 15)
                 .ToList();
             Console.WriteLine(
                 $"For 2024 there are {aflMatches15?.Count} AFL matches in Round 15");
             var aflMatches16 = _cut?.CurrentState.Matches
-                .Where(m => m.League.Code == "AFL" && m.MatchDateTime.Year == K_Season)
+                .Where(m => m.League.Code == "AFL" 
+                    && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .Where(m => m.Round == 16)
                 .ToList();
             Console.WriteLine(
@@ -74,8 +76,8 @@ namespace TipItService.Tests
         {
             var r = _cut?.LoadTippingState();
             Assert.IsTrue(r > 0);
-            var theRound = _cut.GetRound(1, "AFL", K_Season);
-            if (theRound.Count > 0)
+            var theRound = _cut?.GetRound(1, "AFL", _cut.TippingContext.CurrentSeason);
+            if (theRound?.Count > 0)
                 theRound.ForEach(m => Console.WriteLine(m.ToString()));
             else
                 Console.WriteLine("No results found");
@@ -100,6 +102,7 @@ namespace TipItService.Tests
         public void TipItService_CanDoTips()
         {
             var tips = _cut?.Tips();
+            Assert.IsNotNull(tips); 
             Assert.IsFalse(string.IsNullOrEmpty(tips.Value.Item1));
             Console.WriteLine(tips.Value);
         }
@@ -171,16 +174,19 @@ namespace TipItService.Tests
             var md = _cut?.Easiest();
             Assert.IsFalse(string.IsNullOrEmpty(md));
             Console.WriteLine(md);
+            Assert.IsNotNull(_cut);
             mi.InjectMarkdown(
-                DashboardUtils.DashboardFile(K_Season),
-                "easiest",
-                md);
+                DashboardUtils.DashboardFile(
+                    _cut.TippingContext.CurrentSeason),
+                    "easiest",
+                    md);
         }
 
         [TestMethod]
         public void TipItService_CanGenerate_RoundResults()
         {
-            var roundResults = _cut?.RoundResults(K_Season);
+            var roundResults = _cut?.RoundResults(
+                _cut.TippingContext.CurrentSeason);
             Assert.IsNotNull(roundResults);
             roundResults.ForEach(x => Console.WriteLine(x));
         }
