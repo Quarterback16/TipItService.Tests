@@ -21,6 +21,7 @@ namespace TipItService.Tests
         public void TipItService_InstantiatesOk() 
         {
             Assert.IsNotNull(_cut);
+            Console.WriteLine(_cut.CurrentSeason);
         }
 
         [TestMethod]
