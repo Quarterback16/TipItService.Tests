@@ -43,7 +43,7 @@ namespace TipItService.Tests
                 .Where(m => m.League.Code == "NRL" 
                     && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .ToList();
-            var nNrlPlayed = nrlMatches
+            var nNrlPlayed = nrlMatches?
                 .Count(m => m.Played());
             Console.WriteLine(
                 $"For 2024 there are {nrlMatches?.Count} NRL matches {nNrlPlayed} have been played");
@@ -51,7 +51,7 @@ namespace TipItService.Tests
                 .Where(m => m.League.Code == "AFL" 
                     && m.MatchDateTime.Year == _cut.TippingContext.CurrentSeason)
                 .ToList();
-            var nAflPlayed = aflMatches
+            var nAflPlayed = aflMatches?
                 .Count(m => m.Played());
             Console.WriteLine(
                 $"For 2024 there are {aflMatches?.Count} AFL matches {nAflPlayed} have been played");
@@ -249,6 +249,30 @@ namespace TipItService.Tests
             Console.WriteLine($"There are {result.Count} missing results");
             if (result.Count > 0)
                 result.ForEach(m => Console.WriteLine(m));
+        }
+
+        [TestMethod]
+        public void TipItService_CanGenerateMarcoReportAfl()
+        {
+            var md = _cut?.MarcoReport("AFL");
+            Assert.IsFalse(string.IsNullOrEmpty(md));
+            Console.WriteLine(md);
+        }
+
+        [TestMethod]
+        public void TipItService_CanGenerateMarcoReportNrl()
+        {
+            var md = _cut?.MarcoReport("NRL");
+            Assert.IsFalse(string.IsNullOrEmpty(md));
+            Console.WriteLine(md);
+        }
+
+        [TestMethod]
+        public void TipItService_CanGenerateMarcoReports()
+        {
+            var md = _cut?.MarcoReport();
+            Assert.IsFalse(string.IsNullOrEmpty(md));
+            Console.WriteLine(md);
         }
 
     }
