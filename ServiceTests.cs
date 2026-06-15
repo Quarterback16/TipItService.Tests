@@ -275,5 +275,13 @@ namespace TipItService.Tests
             Console.WriteLine(md);
         }
 
+        [TestMethod]
+        public void TipItService_CanGenerateLatestResults()
+        {
+            var md = _cut?.LatestResults();
+            Assert.IsFalse(string.IsNullOrEmpty(md));
+            Console.WriteLine(md);
+        }
+
     }
 }
